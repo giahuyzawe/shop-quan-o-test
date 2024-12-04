@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản lý người dùng</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="./Admin./css/bootstrap.min.css">
-  <link rel="stylesheet" href="./Admin./css/fontawesome.min.css">
-  <link rel="stylesheet" href="./Admin./css/templatemo-style.css">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/fontawesome.min.css">
+  <link rel="stylesheet" href="../css/templatemo-style.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     .header {
@@ -63,12 +63,15 @@
     <div class="form-group">
       <input type="text" id="newUserName" class="form-control" placeholder="Tên người dùng">
       <input type="email" id="newUserEmail" class="form-control mt-2" placeholder="Email người dùng">
-      <select id="newUserRole" class="form-control mt-2">
+      <input type="password" id="newUserPassword" class="form-control mt-2" placeholder="Mật khẩu người dùng">
+
+      <select id="newUserRole" class="form-control mt-2" style="padding-top: 14px;">
         <option value="Admin">Admin</option>
         <option value="Editor">Editor</option>
         <option value="Merchant">Merchant</option>
         <option value="Customer">Customer</option>
       </select>
+      
       <button id="addUserBtn" class="btn btn-primary mt-2">Thêm người dùng</button>
     </div>
 
@@ -139,65 +142,7 @@
 
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script>
-    $(document).ready(function () {
-      let users = JSON.parse(localStorage.getItem('users')) || [];
-
-      // Hiển thị danh sách người dùng
-      renderUserList();
-
-      // Thêm người dùng mới
-      $("#addUserBtn").click(function () {
-        const name = $("#newUserName").val();
-        const email = $("#newUserEmail").val();
-        const role = $("#newUserRole").val();
-
-        if (name && email && role) {
-          const newUser = {
-            id: generateRandomId(),
-            name: name,
-            email: email,
-            role: role,
-            isLocked: false
-          };
-          users.push(newUser);
-          localStorage.setItem('users', JSON.stringify(users));
-          renderUserList();
-          alert('Thêm người dùng thành công!');
-        } else {
-          alert('Vui lòng điền đầy đủ thông tin!');
-        }
-      });
-
-      // Hàm hiển thị danh sách người dùng
-      function renderUserList() {
-        const tableBody = $("tbody");
-        tableBody.empty();
-
-        users.forEach(user => {
-          const userRow = `<tr>
-              <th scope="row">${user.id}</th>
-              <td>${user.name}</td>
-              <td>${user.email}</td>
-              <td>${user.role}</td>
-              <td><span class="badge ${user.isLocked ? 'badge-warning' : 'badge-success'}">${user.isLocked ? 'Đã khóa' : 'Đang hoạt động'}</span></td>
-              <td>
-                <a href="#" class="btn btn-info btn-sm edit-user" data-user-id="${user.id}">Sửa</a>
-                <button class="btn btn-warning btn-sm lock-user" data-user-id="${user.id}" ${user.isLocked ? 'disabled' : ''}>Khóa</button>
-                <button class="btn btn-success btn-sm unlock-user" data-user-id="${user.id}" ${!user.isLocked ? 'disabled' : ''}>Mở khóa</button>
-                <button class="btn btn-danger btn-sm delete-user" data-user-id="${user.id}">Xóa</button>
-              </td>
-            </tr>`;
-          tableBody.append(userRow);
-        });
-      }
-
-      // Hàm tạo ID ngẫu nhiên
-      function generateRandomId() {
-        return Math.floor(Math.random() * 10000);
-      }
-
-      // Các hàm xử lý khóa, mở khóa, chỉnh sửa và xóa sẽ như trong mã bạn đã cung cấp.
-      $(document).ready(function () {
+  $(document).ready(function () {
   let users = JSON.parse(localStorage.getItem('users')) || [];
 
   // Hiển thị danh sách người dùng
@@ -208,21 +153,101 @@
     const name = $("#newUserName").val();
     const email = $("#newUserEmail").val();
     const role = $("#newUserRole").val();
+    const password = $("#newUserPassword").val();
 
-    if (name && email && role) {
-      const newUser = {
+    if (name && email && role && password) {
+      users.push({
         id: generateRandomId(),
         name: name,
         email: email,
         role: role,
+        password: password,
         isLocked: false
-      };
-      users.push(newUser);
+      });
       localStorage.setItem('users', JSON.stringify(users));
       renderUserList();
       alert('Thêm người dùng thành công!');
+      $("#newUserName, #newUserEmail, #newUserPassword").val('');
+      $("#newUserRole").val('Admin');
     } else {
       alert('Vui lòng điền đầy đủ thông tin!');
+    }
+  });
+
+  // Xử lý chỉnh sửa người dùng
+  $(document).on('click', '.edit-user', function () {
+    const userId = $(this).data('user-id');
+    const user = users.find(u => u.id === userId);
+
+    if (user) {
+      $("#editUserId").val(user.id);
+      $("#editUserName").val(user.name).prop('disabled', user.role === 'Admin');
+      $("#editUserEmail").val(user.email).prop('disabled', user.role === 'Admin');
+      $("#editUserRole").val(user.role).prop('disabled', user.role === 'Admin');
+      $("#editUserPassword").val('');
+      $("#editUserPassword").prop('disabled', false); // Admin vẫn sửa được mật khẩu
+      $("#editUserModal").modal('show');
+    }
+  });
+
+  // Lưu thông tin sau khi chỉnh sửa
+  $("#saveEditBtn").click(function () {
+    const userId = parseInt($("#editUserId").val());
+    const user = users.find(u => u.id === userId);
+    const newPassword = $("#editUserPassword").val();
+
+    if (user) {
+      if (user.role !== 'Admin') {
+        user.name = $("#editUserName").val();
+        user.email = $("#editUserEmail").val();
+        user.role = $("#editUserRole").val();
+      }
+      if (newPassword) {
+        user.password = newPassword; // Cập nhật mật khẩu
+      }
+      alert('Cập nhật thông tin người dùng thành công!');
+      localStorage.setItem('users', JSON.stringify(users));
+      renderUserList();
+      $("#editUserModal").modal('hide');
+    }
+  });
+
+  // Khóa người dùng
+  $(document).on('click', '.lock-user', function () {
+    const userId = $(this).data('user-id');
+    if (confirm('Bạn có chắc chắn muốn khóa người dùng này?')) {
+      const user = users.find(u => u.id === userId);
+      if (user) {
+        user.isLocked = true;
+        localStorage.setItem('users', JSON.stringify(users));
+        renderUserList();
+        alert('Người dùng đã bị khóa!');
+      }
+    }
+  });
+
+  // Mở khóa người dùng
+  $(document).on('click', '.unlock-user', function () {
+    const userId = $(this).data('user-id');
+    if (confirm('Bạn có chắc chắn muốn mở khóa người dùng này?')) {
+      const user = users.find(u => u.id === userId);
+      if (user) {
+        user.isLocked = false;
+        localStorage.setItem('users', JSON.stringify(users));
+        renderUserList();
+        alert('Người dùng đã được mở khóa!');
+      }
+    }
+  });
+
+  // Xóa người dùng
+  $(document).on('click', '.delete-user', function () {
+    const userId = $(this).data('user-id');
+    if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+      users = users.filter(u => u.id !== userId);
+      localStorage.setItem('users', JSON.stringify(users));
+      renderUserList();
+      alert('Người dùng đã bị xóa!');
     }
   });
 
@@ -230,9 +255,9 @@
   function renderUserList() {
     const tableBody = $("tbody");
     tableBody.empty();
-
     users.forEach(user => {
-      const userRow = `<tr>
+      const userRow = `
+        <tr>
           <th scope="row">${user.id}</th>
           <td>${user.name}</td>
           <td>${user.email}</td>
@@ -253,93 +278,10 @@
   function generateRandomId() {
     return Math.floor(Math.random() * 10000);
   }
-
-  // Sửa người dùng
-  $(document).on('click', '.edit-user', function () {
-    const userId = $(this).data('user-id');
-    const user = users.find(u => u.id === userId);
-    
-    if (user) {
-      $("#editUserId").val(user.id);
-      $("#editUserName").val(user.name);
-      $("#editUserEmail").val(user.email);
-      $("#editUserRole").val(user.role);
-      $("#editUserPassword").val('');
-      $("#editUserModal").modal('show');
-    }
-  });
-
-  // Lưu thay đổi sau khi chỉnh sửa
-  $("#saveEditBtn").click(function () {
-    const userId = $("#editUserId").val();
-    const newPassword = $("#editUserPassword").val();
-    const user = users.find(u => u.id === parseInt(userId));
-
-    if (user) {
-      user.name = $("#editUserName").val();
-      user.email = $("#editUserEmail").val();
-      user.role = $("#editUserRole").val();
-      if (newPassword) {
-        // Cập nhật mật khẩu
-        user.password = newPassword;
-      }
-      localStorage.setItem('users', JSON.stringify(users));
-      renderUserList();
-      $("#editUserModal").modal('hide');
-      alert('Cập nhật thông tin người dùng thành công!');
-    }
-  });
-
-  // Khóa người dùng
-  $(document).on('click', '.lock-user', function () {
-    const userId = $(this).data('user-id');
-    
-    // Xác nhận trước khi khóa người dùng
-    if (confirm('Bạn có chắc chắn muốn khóa người dùng này?')) {
-      const user = users.find(u => u.id === userId);
-      if (user) {
-        user.isLocked = true;
-        localStorage.setItem('users', JSON.stringify(users));
-        renderUserList();
-        alert('Người dùng đã bị khóa!');
-      }
-    }
-  });
-
-  // Mở khóa người dùng
-  $(document).on('click', '.unlock-user', function () {
-    const userId = $(this).data('user-id');
-    
-    // Xác nhận trước khi mở khóa người dùng
-    if (confirm('Bạn có chắc chắn muốn mở khóa người dùng này?')) {
-      const user = users.find(u => u.id === userId);
-      if (user) {
-        user.isLocked = false;
-        localStorage.setItem('users', JSON.stringify(users));
-        renderUserList();
-        alert('Người dùng đã được mở khóa!');
-      }
-    }
-  });
-
-  // Xóa người dùng
-  $(document).on('click', '.delete-user', function () {
-    const userId = $(this).data('user-id');
-    
-    // Xác nhận trước khi xóa người dùng
-    if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-      const userIndex = users.findIndex(u => u.id === userId);
-      if (userIndex !== -1) {
-        users.splice(userIndex, 1);
-        localStorage.setItem('users', JSON.stringify(users));
-        renderUserList();
-        alert('Người dùng đã bị xóa!');
-      }
-    }
-  });
 });
+renderUserList();
 
-    });
+
   </script>
 </body>
 </html>
