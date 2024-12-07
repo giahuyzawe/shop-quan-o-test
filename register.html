@@ -38,7 +38,7 @@
       <div class="offcanvas__option">
         <div class="offcanvas__links">
           <a href="login.html">Sign in</a>
-          <a href="#">FAQs</a>
+          <a href="contact.html">SPT</a>
         </div>
         <div class="offcanvas__top__hover">
           <span>Usd <i class="arrow_carrot-down"></i></span>
@@ -74,7 +74,7 @@
               <div class="header__top__right">
                 <div class="header__top__links">
                   <a href="#">Sign in</a>
-                  <a href="#">FAQs</a>
+                  <a href="contact.html">SPT</a>
                 </div>
                 <div class="header__top__hover">
                   <span>Usd <i class="arrow_carrot-down"></i></span>
@@ -147,72 +147,38 @@
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Full Name</span>
-                <input
-                  type="text"
-                  name="full_name"
-                  placeholder="Enter your name"
-                  required
-                />
+                <input type="text" name="fullname" id="registerFullname" placeholder="Enter your name" required />
               </div>
               <div class="input-box">
                 <span class="details">Username</span>
-                <input
-                  type="text"
-                  id="registerUsername"
-                  name="username"
-                  placeholder="Enter your username"
-                  required
-                />
+                <input type="text" id="registerUsername" name="username" placeholder="Enter your username" required />
               </div>
               <div class="input-box">
                 <span class="details">Email</span>
-                <input
-                  type="email"
-                  name="email"
-                  id="registerEmail"
-                  placeholder="Enter your email"
-                  required
-                />
+                <input type="email" name="email" id="registerEmail" placeholder="Enter your email" required />
               </div>
               <div class="input-box">
                 <span class="details">Phone Number</span>
-                <input
-                  type="text"
-                  id="registerPhone"
-                  name="phone_number"
-                  placeholder="Enter your number"
-                  required
-                />
+                <input type="text" id="registerPhone" name="phone_number" placeholder="Enter your number" required />
               </div>
               <div class="input-box">
                 <span class="details">Password</span>
-                <input
-                  type="password"
-                  id="registerPassword"
-                  name="password"
-                  placeholder="Enter your password"
-                  required
-                />
+                <input type="password" id="registerPassword" name="password" placeholder="Enter your password" required />
               </div>
               <div class="input-box">
                 <span class="details">Confirm Password</span>
-                <input
-                  type="password"
-                  name="confirm_password"
-                  placeholder="Confirm your password"
-                  required
-                />
+                <input type="password" name="confirm_password" placeholder="Confirm your password" required />
+              </div>
+              <!-- Added Address field -->
+              <div class="input-box">
+                <span class="details">Address</span>
+                <input type="text" name="registerAddress" id="registerAddress" placeholder="Enter your address" required />
               </div>
             </div>
             <div class="gender-details">
               <input type="radio" name="gender" value="Male" id="dot-1" />
               <input type="radio" name="gender" value="Female" id="dot-2" />
-              <input
-                type="radio"
-                name="gender"
-                value="Prefer not to say"
-                id="dot-3"
-              />
+              <input type="radio" name="gender" value="Prefer not to say" id="dot-3" />
               <span class="gender-title">Gender</span>
               <div class="category">
                 <label for="dot-1">
@@ -233,6 +199,7 @@
               <input type="button" value="Register" onclick="registerUser()" />
             </div>
           </form>
+          
         </div>
       </div>
     </div>

@@ -93,7 +93,7 @@
               <div class="d-flex justify-content-between mb-4">
                 <div>
                   <label for="startDate">Start Date:</label>
-                  <input type="date" id="startDate" />
+                  <input type="date" id="startDate" value="2024-12-01" />
                 </div>
                 <div>
                   <label for="endDate">End Date:</label>
@@ -189,23 +189,98 @@
       <script>
         // Giữ nguyên dữ liệu mẫu hiện tại
         const productData = [
-          { name: "Pique Biker Jacket", quantity: 150, revenue: 67.24, id: 1 },
-          { name: "Black Sneaker", quantity: 120, revenue: 43.48, id: 2 },
+          {
+            name: "Pique Biker Jacket",
+            quantity: 15,
+            price: 45.0,
+            id: 1,
+            revenue: 45.0 * 15,
+          },
+          {
+            name: "Black Sneaker",
+            quantity: 12,
+            price: 35.0,
+            id: 2,
+            revenue: 35.0 * 12,
+          },
           {
             name: "Brown Hooded Shirt Jacket",
-            quantity: 80,
-            revenue: 60.9,
+            quantity: 8,
+            price: 55.0,
             id: 3,
+            revenue: 55.0 * 80,
           },
-          { name: "Navy Henley T-shirt", quantity: 200, revenue: 26.28, id: 4 },
+          {
+            name: "Gray Fringed Scarf",
+            quantity: 21,
+            price: 30.0,
+            id: 4,
+            revenue: 30.0 * 21,
+          },
+          {
+            name: "Black Floral Graphic T-Shirt",
+            quantity: 29,
+            price: 25.0,
+            id: 5,
+            revenue: 25.0 * 29,
+          },
+          {
+            name: "Perfume Set",
+            quantity: 2,
+            price: 75.0,
+            id: 6,
+            revenue: 75.0 * 2,
+          },
+          {
+            name: "White Utility Backpack",
+            quantity: 4,
+            price: 50.0,
+            id: 7,
+            revenue: 50.0 * 4,
+          },
+          {
+            name: "Comouflage Hooded Jacket",
+            quantity: 10,
+            price: 60.0,
+            id: 8,
+            revenue: 60.0 * 10,
+          },
+          {
+            name: "Brown Leather Backpack",
+            quantity: 45,
+            price: 80.0,
+            id: 9,
+            revenue: 80.0 * 45,
+          },
+          {
+            name: "Gold Rectangular Cufflinks",
+            quantity: 30,
+            price: 40.0,
+            id: 10,
+            revenue: 40.0 * 30,
+          },
+          {
+            name: "Fringed Black Scarf",
+            quantity: 6,
+            price: 35.0,
+            id: 11,
+            revenue: 35.0 * 6,
+          },
+          {
+            name: "Navy Henley T-shirt",
+            quantity: 30,
+            price: 20.0,
+            id: 12,
+            revenue: 20.0 * 30,
+          },
         ];
 
         const customerData = [
-          { name: "Ta Quang Trung", revenue: 1500, id: 1 },
-          { name: "Huynh Ngoc Truc", revenue: 1200, id: 2 },
-          { name: "Ngo Nguyen Thanh Nhan", revenue: 1100, id: 3 },
-          { name: "Nguyen Minh Khang", revenue: 1000, id: 4 },
-          { name: "Vu Gia Huy", revenue: 900, id: 5 },
+          { name: "Ta Quang Trung", revenue: 960, id: 1 },
+          { name: "Huynh Ngoc Truc", revenue: 610, id: 2 },
+          { name: "Ngo Nguyen Thanh Nhan", revenue: 520, id: 3 },
+          { name: "Nguyen Minh Khang", revenue: 375, id: 4 },
+          { name: "Vu Gia Huy", revenue: 285, id: 5 },
         ];
 
         // Hàm hiển thị bảng sản phẩm
@@ -218,17 +293,21 @@
           productData.forEach((product) => {
             totalRevenue += product.revenue;
 
-            if (product.revenue > mostPopular.revenue) mostPopular = product;
-            if (product.revenue < leastPopular.revenue) leastPopular = product;
+            // Update the most popular product based on quantity
+            if (product.quantity > mostPopular.quantity) mostPopular = product;
+
+            // Update the least popular product based on quantity
+            if (product.quantity < leastPopular.quantity)
+              leastPopular = product;
 
             tableHTML += `
-                        <tr>
-                            <td>${product.name}</td>
-                            <td>${product.quantity}</td>
-                            <td>$${product.revenue}</td>
-                            <td><a href="invoice.html?product_id=${product.id}">View Invoice</a></td>
-                        </tr>
-                    `;
+            <tr>
+                <td>${product.name}</td>
+                <td>${product.quantity}</td>
+                <td>$${product.revenue}</td>
+                <td><a href="invoice-customer-${product.id}.html">View Invoice</a></td>
+            </tr>
+        `;
           });
 
           document.getElementById("productTable").innerHTML = tableHTML;
@@ -250,7 +329,7 @@
                         <tr>
                             <td>${customer.name}</td>
                             <td>$${customer.revenue}</td>
-                            <td><a href="invoice.html?customer_id=${customer.id}">View Invoice</a></td>
+                            <td><a href="invoice-product-${customer.id}.html">View Invoice</a></td>
                         </tr>
                     `;
           });
@@ -282,20 +361,62 @@
         }
 
         // Hàm lọc dữ liệu theo ngày
+        // Sao lưu dữ liệu gốc
+        // Sao lưu dữ liệu gốc
+        const originalProductData = JSON.parse(JSON.stringify(productData)); // Deep copy
+
+        // Sao lưu dữ liệu gốc
+
         function filterData() {
           const startDate = document.getElementById("startDate").value;
           const endDate = document.getElementById("endDate").value;
 
-          // Sử dụng startDate và endDate để lọc dữ liệu (hiện tại chỉ là ví dụ)
-          alert(`Filtering data from ${startDate} to ${endDate}`);
-        }
+          // Kiểm tra ngày bắt đầu và ngày kết thúc
+          if (!startDate || !endDate) {
+            alert("Vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc!");
+            return;
+          }
 
-        // Khởi tạo khi trang load
-        window.onload = function () {
+          const startDateObj = new Date(startDate);
+          const endDateObj = new Date(endDate);
+
+          if (startDateObj.getDate() !== 1 || endDateObj.getDate() !== 30) {
+            alert(
+              "Dữ liệu thống kê bắt buộc phải chọn ngày bắt đầu là ngày 1 và ngày kết thúc là ngày 30 của tháng!"
+            );
+            return;
+          }
+
+          // Ngày cơ sở
+          const baseDateStart = new Date("2024-12-01");
+          const baseDateEnd = new Date("2024-12-30");
+
+          productData.forEach((product) => {
+            if (endDateObj < baseDateStart) {
+              // Nếu trước khoảng thời gian gốc, giảm quantity
+              product.quantity = Math.max(
+                0,
+                originalProductData.find((p) => p.id === product.id).quantity -
+                  5
+              );
+            } else if (startDateObj > baseDateEnd) {
+              // Nếu sau khoảng thời gian gốc, tăng quantity
+              product.quantity =
+                originalProductData.find((p) => p.id === product.id).quantity +
+                5;
+            } else {
+              // Nếu trong khoảng thời gian gốc, giữ nguyên dữ liệu
+              product.quantity = originalProductData.find(
+                (p) => p.id === product.id
+              ).quantity;
+            }
+            product.revenue = product.quantity * product.price; // Tính lại revenue
+          });
+
+          // Cập nhật lại bảng
           renderProductTable();
           renderCustomerTable();
-          renderRevenueChart();
-        };
+        }
       </script>
     </div>
   </body>
